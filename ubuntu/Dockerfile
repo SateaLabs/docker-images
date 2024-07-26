@@ -10,6 +10,10 @@ RUN apt-get update
 RUN apt-get -y install \
     tzdata \
     ca-certificates \
+    gcc \
+    make \
+    liblz4-tool \
+    lz4 \
     curl \
     gnupg \
     expect \

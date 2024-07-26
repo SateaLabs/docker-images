@@ -88,7 +88,6 @@ function install() {
     sed -i -e 's/max_num_inbound_peers = 40/max_num_inbound_peers = 100/' -e 's/max_num_outbound_peers = 10/max_num_outbound_peers = 100/' $HOME/.0gchain/config/config.toml
     wget -O $HOME/.0gchain/config/addrbook.json https://testnet-files.itrocket.net/og/addrbook.json
 
-
     # 配置裁剪
     sed -i -e "s/^pruning *=.*/pruning = \"custom\"/" $HOME/.0gchain/config/app.toml
     sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"100\"/" $HOME/.0gchain/config/app.toml
@@ -130,7 +129,7 @@ function check() {
 function clean() {
     echo "clean ...."
     # 按需添加脚本
-    #..........
+    stop
     ########清理数据#########
     rm -rf $workDir
 }
