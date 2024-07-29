@@ -8,7 +8,7 @@ ENV WALLET_NAME "wallet"
 # RUN wget "" \
 #     && chmod +x ./shell.sh \
 #     && ./shell.sh install
-
+# docker build --platform=linux/amd64 -t  sateanode/ubuntu-pm2-0g-validator:latest .
 COPY ./shell.sh ./
 RUN chmod +x ./shell.sh &&  ./shell.sh install --auto
 ENV PATH $PATH:/usr/local/go/bin:$HOME/go/bin
