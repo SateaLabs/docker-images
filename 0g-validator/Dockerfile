@@ -8,7 +8,7 @@ ENV WALLET_NAME "wallet"
 # RUN wget "" \
 #     && chmod +x ./shell.sh \
 #     && ./shell.sh install
-# docker build --platform=linux/amd64 -t  sateanode/ubuntu-pm2-0g-validator:latest .
+# docker build -t  sateanode/ubuntu-pm2-0g-validator:latest .
 COPY ./shell.sh ./
 RUN chmod +x ./shell.sh &&  ./shell.sh install --auto
 ENV PATH $PATH:/usr/local/go/bin:$HOME/go/bin
@@ -16,5 +16,7 @@ ENV PATH $PATH:/usr/local/go/bin:$HOME/go/bin
 
 CMD ["./shell.sh","start"]
 
-
+# docker logs -f 0g-validator
+# docker exec -ti 0g-validator pm2 logs 0g-validator
+# docker run -tid --name 0g-validator sateanode/ubuntu-pm2-0g-validator:latest
 # docker run --rm --name 0g-validator sateanode/ubuntu-pm2-0g-validator:latest cat .0gchain/config/config.toml
