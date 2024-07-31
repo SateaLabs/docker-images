@@ -99,36 +99,37 @@ function install() {
     else
         echo "Go 环境已安装"
     fi
-    git clone -b $PROJECT_VERSION https://github.com/0glabs/0g-chain.git
-    ./0g-chain/networks/testnet/install.sh
-    source ~/.profile
-    0gchaind -h
-    0gchaind init $MONIKER --chain-id zgtendermint_16600-2
+    git clone https://github.com/0glabs/0g-chain
+    cd 0g-chain
+    git checkout v0.2.5
+
+    # Build binary
+    make install
+
+    # Set node CLI configuration
     0gchaind config chain-id zgtendermint_16600-2
-    0gchaind config node tcp://localhost:13457
+    0gchaind config keyring-backend test
+    0gchaind config node tcp://localhost:27657
 
-    # 配置创世文件
-    rm ~/.0gchain/config/genesis.json
-    wget -P ~/.0gchain/config https://github.com/0glabs/0g-chain/releases/download/v0.2.3/genesis.json
-    0gchaind validate-genesis
+    # Initialize the node
+    0gchaind init "$moniker" --chain-id zgtendermint_16600-2
 
-    # 配置节点
-    SEEDS="8f21742ea5487da6e0697ba7d7b36961d3599567@og-testnet-seed.itrocket.net:47656"
-    PEERS="4d98cf3cb2a61238a0b1557596cdc4b306472cb9@95.216.228.91:13456,c44baa3836d07f9ed9a832f819bcf19fda67cc5d@95.216.42.217:13456,81987895a11f6689ada254c6b57932ab7ed909b6@54.241.167.190:26656,010fb4de28667725a4fef26cdc7f9452cc34b16d@54.176.175.48:26656,e9b4bc203197b62cc7e6a80a64742e752f4210d5@54.193.250.204:26656,68b9145889e7576b652ca68d985826abd46ad660@18.166.164.232:26656"
-    sed -i "s/persistent_peers = \"\"/persistent_peers = \"$PEERS\"/" $HOME/.0gchain/config/config.toml
-    sed -i "s/seeds = \"\"/seeds = \"$SEEDS\"/" $HOME/.0gchain/config/config.toml
-    sed -i -e 's/max_num_inbound_peers = 40/max_num_inbound_peers = 100/' -e 's/max_num_outbound_peers = 10/max_num_outbound_peers = 100/' $HOME/.0gchain/config/config.toml
-    wget -O $HOME/.0gchain/config/addrbook.json https://testnet-files.itrocket.net/og/addrbook.json
+    # Download genesis and addrbook files
+    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/genesis.json >$HOME/.0gchain/config/genesis.json
+    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/addrbook.json >$HOME/.0gchain/config/addrbook.json
 
-    # 配置裁剪
-    sed -i -e "s/^pruning *=.*/pruning = \"custom\"/" $HOME/.0gchain/config/app.toml
-    sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"100\"/" $HOME/.0gchain/config/app.toml
-    sed -i -e "s/^pruning-keep-every *=.*/pruning-keep-every = \"0\"/" $HOME/.0gchain/config/app.toml
-    sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"10\"/" $HOME/.0gchain/config/app.toml
+    # Set seeds
+    sed -i -e 's|^seeds *=.*|seeds = "81987895a11f6689ada254c6b57932ab7ed909b6@54.241.167.190:26656,010fb4de28667725a4fef26cdc7f9452cc34b16d@54.176.175.48:26656,e9b4bc203197b62cc7e6a80a64742e752f4210d5@54.193.250.204:26656,68b9145889e7576b652ca68d985826abd46ad660@18.166.164.232:26656"|' $HOME/.0gchain/config/config.toml
 
-    # 配置端口
-    sed -i -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:13458\"%; s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:13457\"%; s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:13460\"%; s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:13456\"%; s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":13466\"%" $HOME/.0gchain/config/config.toml
-    sed -i -e "s%^address = \"tcp://localhost:1317\"%address = \"tcp://0.0.0.0:13417\"%; s%^address = \":8080\"%address = \":13480\"%; s%^address = \"0.0.0.0:9090\"%address = \"0.0.0.0:13490\"%; s%^address = \"localhost:9091\"%address = \"0.0.0.0:13491\"%; s%:8545%:13445%; s%:8546%:13446%; s%:6065%:13465%" $HOME/.0gchain/config/app.toml
+    # Set minimum gas price
+    sed -i -e 's|^minimum-gas-prices *=.*|minimum-gas-prices = "0.0025ua0gi"|' $HOME/.0gchain/config/app.toml
+
+    # Set pruning
+    sed -i \
+        -e 's|^pruning *=.*|pruning = "custom"|' \
+        -e 's|^pruning-keep-recent *=.*|pruning-keep-recent = "100"|' \
+        -e 's|^pruning-interval *=.*|pruning-interval = "17"|' \
+        $HOME/.0gchain/config/app.toml
     source $HOME/.bash_profile
 }
 
