@@ -15,3 +15,6 @@ ENV PATH $PATH:/usr/local/go/bin:$HOME/go/bin
 # ENTRYPOINT ["sh","shell.sh","install","--auto"]
 
 CMD ["./shell.sh","start"]
+
+
+# docker run --rm --name 0g-validator sateanode/ubuntu-pm2-0g-validator:latest cat .0gchain/config/config.toml

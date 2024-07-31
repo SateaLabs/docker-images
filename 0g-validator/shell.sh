@@ -139,7 +139,7 @@ function start() {
     checkVars
     # 按需添加脚本
     # 使用 PM2 启动节点进程
-    pm2 start "0gchaind -- start" && pm2 save && pm2 startup
+    pm2 start "0gchaind start" && pm2 save && pm2 startup
     pm2 restart 0gchaind
 }
 
