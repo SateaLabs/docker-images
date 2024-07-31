@@ -4,7 +4,7 @@
 projectName=${PRJECT_NAME-"0g-validator"}
 workDir="/$HOME/satea/$projectName"
 dataDir="$HOME/satea/$projectName/data"
-moniker=${MONIKER-""}
+moniker=${MONIKER-"Test"}
 walletName=${WALLET_NAME-"wallet"}
 GO_VERSION="1.22.0"
 PROJECT_VERSION="v0.2.5"
