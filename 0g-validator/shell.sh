@@ -7,7 +7,7 @@ dataDir="$HOME/satea/$projectName/data"
 moniker=${MONIKER-""}
 walletName=${WALLET_NAME-"wallet"}
 GO_VERSION="1.22.0"
-PROJECT_VERSION="v0.2.3"
+PROJECT_VERSION="v0.2.5"
 
 ALL_SATEA_VARS=("projectName" "moniker" "walletName")
 
