@@ -7,6 +7,7 @@ dataDir="$HOME/satea/$projectName/0gchaind"
 orderId=${ORDER_ID-"0"}
 moniker=${MONIKER-"Test"}
 walletName=${WALLET_NAME-"wallet"}
+pm2Name="0gchaind"
 GO_VERSION="1.22.0"
 PROJECT_VERSION="v0.2.5"
 
@@ -141,8 +142,7 @@ function install() {
 function restart() {
     echo "restart ..."
     source $HOME/.bash_profile
-    stop
-    start
+    pm2 restart $pm2Name
 }
 
 function start() {
@@ -151,14 +151,14 @@ function start() {
     checkVars
     # 按需添加脚本
     # 使用 PM2 启动节点进程
-    pm2-runtime start --name "0gchaind" "0gchaind --home $dataDir start"
+    pm2-runtime start --name "$pm2Name" "0gchaind --home $dataDir start"
 }
 
 function stop() {
     echo "stop ..."
     source $HOME/.bash_profile
     # 按需添加脚本
-    pm2 stop 0gchaind
+    pm2 stop $pm2Name
 }
 
 function upgrade() {
@@ -196,7 +196,7 @@ function snapshot() {
     0gchaind --home $dataDir tendermint unsafe-reset-all --keep-addr-book
     lz4 -dc snapshot.tar.lz4 | tar -xf - -C "$dataDir"
     mv $dataDir/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
-    pm2 restart 0gchaind
+    pm2 restart $pm2Name
 }
 
 function check() {
@@ -207,10 +207,12 @@ function check() {
         cat <<EOF
         {
             "status": "Unknow",
+            "orderId": $orderId,
             "pid": 0,
             "memory": 0,
             "cpu": 0,
-            "blockDiff": 0
+            "synced_height": 0,
+            "block_diff": 0
         }
 EOF
     else
