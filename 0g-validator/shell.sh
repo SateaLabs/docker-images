@@ -222,6 +222,7 @@ EOF
         cat <<EOF
         {
             "status": "Running",
+            "orderId": $ORDER_ID,
             "pid": $pid,
             "memory": $memory,
             "cpu": $cpu,
