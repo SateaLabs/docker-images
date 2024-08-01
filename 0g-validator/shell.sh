@@ -221,7 +221,7 @@ EOF
         cpu=$(echo $pm2Status | jq .[0].monit.cpu)
         cat <<EOF
         {
-            "status": "Running",
+            "status": "Runninga",
             "orderId": $ORDER_ID,
             "pid": $pid,
             "memory": $memory,
