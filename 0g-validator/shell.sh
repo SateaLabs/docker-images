@@ -182,6 +182,8 @@ function upgrade() {
 
     # reset chain data
     0gchaind --home $dataDir tendermint unsafe-reset-all --keep-addr-book
+    # fix bug
+    rm -rf $HOME/.0gchain
 }
 
 function snapshot() {
@@ -189,7 +191,7 @@ function snapshot() {
     source $HOME/.bash_profile
     stop
     # 按需添加脚本
-    sourceUrl=$1
+    sourceUrl=${1-"https://snapshots-testnet.nodejumper.io/0g-testnet/0g-testnet_latest.tar.lz4"}
     wget -c -O snapshot.tar.lz4 $sourceUrl
     cp $dataDir/data/priv_validator_state.json $dataDir/data/priv_validator_state.json.backup
     0gchaind --home $dataDir tendermint unsafe-reset-all --keep-addr-book
