@@ -116,7 +116,7 @@ function install() {
     # Set node CLI configuration
     0gchaind --home $dataDir config chain-id zgtendermint_16600-2
     0gchaind --home $dataDir config keyring-backend test
-    0gchaind --home $dataDir config node tcp://localhost:27657
+    0gchaind --home $dataDir config node tcp://localhost:26657
 
     # Initialize the node
     0gchaind --home $dataDir init "$moniker" --chain-id zgtendermint_16600-2
