@@ -24,7 +24,7 @@ RUN apt-get -y install \
     unzip \
     git \
     zip
-ENV TZ "UTC"
+ENV TZ="UTC"
 RUN echo "${TZ}" > /etc/timezone \
           && dpkg-reconfigure --frontend noninteractive tzdata
 
