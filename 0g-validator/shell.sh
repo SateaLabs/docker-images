@@ -110,7 +110,7 @@ function install() {
     0gchaind --home $dataDir config chain-id zgtendermint_16600-2
     0gchaind --home $dataDir config keyring-backend test
     0gchaind --home $dataDir config node tcp://localhost:27657
-
+    
     # Initialize the node
     0gchaind --home $dataDir init "$moniker" --chain-id zgtendermint_16600-2
 
@@ -139,15 +139,13 @@ function start() {
     checkVars
     # 按需添加脚本
     # 使用 PM2 启动节点进程
-    pm2 start --name "0gchaind" "0gchaind --home $dataDir start" 
-    pm2 save
-    # pm2 restart 0gchaind
+    pm2-runtime start --name "0gchaind" "0gchaind --home $dataDir start" 
 }
 
 function stop() {
     echo "stop ..."
     # 按需添加脚本
-    pm2 stop 0gchaind
+    pm2-runtime stop 0gchaind
 }
 
 function upgrade() {
