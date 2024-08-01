@@ -152,7 +152,7 @@ function start() {
     checkVars
     # 按需添加脚本
     # 使用 PM2 启动节点进程
-    pm2-runtime start --name "$pm2Name" "0gchaind --home $dataDir start"
+    pm2 start --name "$pm2Name" "0gchaind --home $dataDir start"
 }
 
 function stop() {
@@ -165,6 +165,7 @@ function stop() {
 function upgrade() {
     echo "upgrade ..."
     source $HOME/.bash_profile
+    pm2 stop $pm2Name
     # 按需添加脚本
     rm -rf 0g-chain
     git clone -b $PROJECT_VERSION https://github.com/0glabs/0g-chain.git
@@ -183,13 +184,13 @@ function upgrade() {
 
     # reset chain data
     0gchaind tendermint unsafe-reset-all --home $dataDir --keep-addr-book
-    # fix bug
-    rm -rf $HOME/.0gchain
+    pm2 restart $pm2Name
 }
 
 function snapshot() {
     echo "snapshot ..."
     source $HOME/.bash_profile
+    pm2 stop $pm2Name
     # 按需添加脚本
     sourceUrl=${1-"https://snapshots-testnet.nodejumper.io/0g-testnet/0g-testnet_latest.tar.lz4"}
     wget -c -O snapshot.tar.lz4 $sourceUrl
