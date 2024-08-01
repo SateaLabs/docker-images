@@ -107,22 +107,22 @@ function install() {
     make install
     ln -s $HOME/go/bin/0gchaind /usr/local/go/bin
     # Set node CLI configuration
-    0gchaind config chain-id zgtendermint_16600-2
-    0gchaind config keyring-backend test
-    0gchaind config node tcp://localhost:27657
+    0gchaind --home $dataDir config chain-id zgtendermint_16600-2
+    0gchaind --home $dataDir config keyring-backend test
+    0gchaind --home $dataDir config node tcp://localhost:27657
 
     # Initialize the node
-    0gchaind init "$moniker" --chain-id zgtendermint_16600-2
+    0gchaind --home $dataDir init "$moniker" --chain-id zgtendermint_16600-2
 
     # Download genesis and addrbook files
-    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/genesis.json >$HOME/.0gchain/config/genesis.json
-    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/addrbook.json >$HOME/.0gchain/config/addrbook.json
+    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/genesis.json > $dataDir/config/genesis.json
+    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/addrbook.json > $dataDir/config/addrbook.json
 
     # Set seeds
-    sed -i -e 's|^seeds *=.*|seeds = "81987895a11f6689ada254c6b57932ab7ed909b6@54.241.167.190:26656,010fb4de28667725a4fef26cdc7f9452cc34b16d@54.176.175.48:26656,e9b4bc203197b62cc7e6a80a64742e752f4210d5@54.193.250.204:26656,68b9145889e7576b652ca68d985826abd46ad660@18.166.164.232:26656"|' $HOME/.0gchain/config/config.toml
+    sed -i -e 's|^seeds *=.*|seeds = "81987895a11f6689ada254c6b57932ab7ed909b6@54.241.167.190:26656,010fb4de28667725a4fef26cdc7f9452cc34b16d@54.176.175.48:26656,e9b4bc203197b62cc7e6a80a64742e752f4210d5@54.193.250.204:26656,68b9145889e7576b652ca68d985826abd46ad660@18.166.164.232:26656"|' $dataDir/config/config.toml
 
     # Set minimum gas price
-    sed -i -e 's|^minimum-gas-prices *=.*|minimum-gas-prices = "0.0025ua0gi"|' $HOME/.0gchain/config/app.toml
+    sed -i -e 's|^minimum-gas-prices *=.*|minimum-gas-prices = "0.0025ua0gi"|' $dataDir/config/app.toml
 
     # Set pruning
     sed -i \
@@ -139,7 +139,7 @@ function start() {
     checkVars
     # 按需添加脚本
     # 使用 PM2 启动节点进程
-    pm2 start --name "0gchaind" "0gchaind start" 
+    pm2 start --name "0gchaind" "0gchaind --home $dataDir start" 
     pm2 save
     # pm2 restart 0gchaind
 }
