@@ -189,15 +189,14 @@ function upgrade() {
 function snapshot() {
     echo "snapshot ..."
     source $HOME/.bash_profile
-    # stop
     # 按需添加脚本
     sourceUrl=${1-"https://snapshots-testnet.nodejumper.io/0g-testnet/0g-testnet_latest.tar.lz4"}
     wget -c -O snapshot.tar.lz4 $sourceUrl
-    cp $dataDir/data/priv_validator_state.json $dataDir/data/priv_validator_state.json.backup
+    cp $dataDir/data/priv_validator_state.json $dataDir/priv_validator_state.json.backup
     0gchaind --home $dataDir tendermint unsafe-reset-all --keep-addr-book
     lz4 -dc snapshot.tar.lz4 | tar -xf - -C "$dataDir"
-    mv $dataDir/data/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
-    start
+    mv $dataDir/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
+    pm2 restart 0gchaind
 }
 
 function check() {
