@@ -175,6 +175,7 @@ function upgrade() {
 
 function snapshot() {
     echo "snapshot ..."
+    stop
     # 按需添加脚本
     sourceUrl=$1
     wget -c -O snapshot.tar.lz4 $sourceUrl
@@ -182,11 +183,41 @@ function snapshot() {
     0gchaind tendermint unsafe-reset-all --home $dataDir --keep-addr-book
     lz4 -dc snapshot.tar.lz4 | tar -xf - -C "$dataDir"
     mv $HOME/.0gchain/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
+    start
 }
 
 function check() {
-    echo "check ..."
     # 按需添加脚本
+    officialNodeStatus=$(curl -s https://chainscan-newton.0g.ai/api/v2/stats)
+    if [ "$officialNodeStatus" == "" ]; then
+        cat <<EOF
+        {
+            "status": "Unknow",
+            "pid": 0,
+            "memory": 0,
+            "cpu": 0,
+            "blockDiff": 0
+        }
+EOF
+    else
+        total_blocks=$(echo $officialNodeStatus | jq .total_blocks | sed 's/^"\(.*\)"$/\1/')
+        latest_block_height=$(0gchaind status | jq .sync_info.latest_block_height | sed 's/^"\(.*\)"$/\1/')
+        blockDiff=$(expr $total_blocks - $latest_block_height)
+        pm2Status=$(pm2 jlist)
+        pid=$(echo $pm2Status | jq .[0].pid)
+        memory=$(echo $pm2Status | jq .[0].monit.memory)
+        cpu=$(echo $pm2Status | jq .[0].monit.cpu)
+        cat <<EOF
+        {
+            "status": "Running",
+            "pid": $pid,
+            "memory": $memory,
+            "cpu": $cpu,
+            "blockDiff": $blockDiff
+        }
+EOF
+    fi
+
 }
 
 function clean() {
@@ -280,7 +311,7 @@ logs)
   start                Start the $projectName service
   stop                 Stop the $projectName service
   upgrade              Upgrade an existing installation of $projectName
-  snapshot             Update $projectName snapshot data example: snapshot "source url"
+  snapshot             Update $projectName snapshot data example: snapshot 'source url'
   check                Check $projectName service status
   clean                Remove the $projectName from your service, remove data!!! 
   logs                 Show the logs of the $projectName service"
