@@ -136,23 +136,32 @@ function install() {
     source $HOME/.bash_profile
 }
 
+function restart() {
+    echo "restart ..."
+    source $HOME/.bash_profile
+    stop
+    start
+}
+
 function start() {
     echo "start ..."
     source $HOME/.bash_profile
     checkVars
     # 按需添加脚本
     # 使用 PM2 启动节点进程
-    pm2-runtime restart --name "0gchaind" "0gchaind --home $dataDir start"
+    pm2-runtime start --name "0gchaind" "0gchaind --home $dataDir start"
 }
 
 function stop() {
     echo "stop ..."
+    source $HOME/.bash_profile
     # 按需添加脚本
     pm2-runtime stop 0gchaind
 }
 
 function upgrade() {
     echo "upgrade ..."
+    source $HOME/.bash_profile
     # 按需添加脚本
     cd && rm -rf 0g-chain
     git clone -b $PROJECT_VERSION https://github.com/0glabs/0g-chain.git
@@ -175,6 +184,7 @@ function upgrade() {
 
 function snapshot() {
     echo "snapshot ..."
+    source $HOME/.bash_profile
     stop
     # 按需添加脚本
     sourceUrl=$1
@@ -187,6 +197,7 @@ function snapshot() {
 }
 
 function check() {
+    source $HOME/.bash_profile
     # 按需添加脚本
     officialNodeStatus=$(curl -s https://chainscan-newton.0g.ai/api/v2/stats)
     if [ "$officialNodeStatus" == "" ]; then
@@ -271,6 +282,10 @@ install)
         install
     fi
     ;;
+restart)
+    #重新启动节点的函数
+    restart
+    ;;
 start)
     #创建启动节点的函数
     start
@@ -308,6 +323,7 @@ logs)
   check-packages       Check basic installation package
   install              Install $projectName environment
   init                 Install Dependent packages
+  restart               Restart the $projectName service
   start                Start the $projectName service
   stop                 Stop the $projectName service
   upgrade              Upgrade an existing installation of $projectName
