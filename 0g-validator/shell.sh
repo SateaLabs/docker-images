@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # 变量初始化
-projectName=${PRJECT_NAME-"0g-validator"}
-workDir="/$HOME/satea/$projectName"
-dataDir="$HOME/satea/$projectName/0gchaind"
-orderId=${ORDER_ID-"0"}
-moniker=${MONIKER-"Test"}
-walletName=${WALLET_NAME-"wallet"}
-pm2Name="0gchaind"
-GO_VERSION="1.22.0"
-PROJECT_VERSION="v0.2.5"
+export projectName=${PRJECT_NAME-"0g-validator"}
+export workDir="/$HOME/satea/$projectName"
+export dataDir="$HOME/satea/$projectName/0gchaind"
+export orderId=${ORDER_ID-"0"}
+export moniker=${MONIKER-"Test"}
+export walletName=${WALLET_NAME-"wallet"}
+export pm2Name="0gchaind"
+export GO_VERSION="1.22.0"
+export PROJECT_VERSION="v0.2.5"
+
 
 ALL_SATEA_VARS=("projectName" "moniker" "walletName")
 
