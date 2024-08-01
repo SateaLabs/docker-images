@@ -85,6 +85,7 @@ function checkPackages() {
             sudo apt install -y "$pkg"
         fi
     done
+    go verison
 }
 
 function install() {
@@ -267,11 +268,8 @@ Introduction: Satea is a DePINFI aggregator dedicated to breaking down the tradi
 }
 
 case $1 in
-check-packages)
+pre-check)
     checkPackages
-    ;;
-init)
-    init
     ;;
 install)
     if [ "$2" = "--auto" ]; then
@@ -323,7 +321,7 @@ logs)
     #定义帮助信息 例子
     About
     echo "Flag:
-  check-packages       Check basic installation package
+  pre-check       Check basic installation package
   install              Install $projectName environment
   init                 Install Dependent packages
   restart               Restart the $projectName service
