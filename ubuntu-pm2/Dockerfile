@@ -6,4 +6,4 @@ RUN apt-get -y install \
     npm
 RUN npm install pm2 -g
 
-# docker build -t sateanode/ubuntu-pm2:latest . 
+# docker build --no-cache -t sateanode/ubuntu-pm2:latest . 

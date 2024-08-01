@@ -28,4 +28,4 @@ ENV TZ="UTC"
 RUN echo "${TZ}" > /etc/timezone \
           && dpkg-reconfigure --frontend noninteractive tzdata
 
-#   docker build -t sateanode/ubuntu:latest .       
+#   docker build --no-cache -t sateanode/ubuntu:latest .       
