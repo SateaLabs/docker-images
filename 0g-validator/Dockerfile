@@ -11,7 +11,7 @@ RUN wget "https://raw.githubusercontent.com/SateaLabs/docker-images/main/0g-vali
 
 # COPY ./shell.sh ./
 # RUN chmod +x ./shell.sh &&  ./shell.sh install --auto
-ENV PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
+ENV PATH=$PATH:/usr/local/go/bin:/root/go/bin
 # ENTRYPOINT ["sh","shell.sh","install","--auto"]
 
 CMD ["./shell.sh","start"]
