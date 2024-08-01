@@ -226,7 +226,8 @@ EOF
             "pid": $pid,
             "memory": $memory,
             "cpu": $cpu,
-            "blockDiff": $blockDiff
+            "synced_height": $latest_block_height,
+            "block_diff": $blockDiff
         }
 EOF
     fi
