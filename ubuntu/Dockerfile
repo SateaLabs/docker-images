@@ -18,6 +18,7 @@ RUN apt-get -y install \
     gnupg \
     expect \
     screen \
+    vim \
     jq \
     wget \
     unzip \

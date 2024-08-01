@@ -4,6 +4,7 @@
 projectName=${PRJECT_NAME-"0g-validator"}
 workDir="/$HOME/satea/$projectName"
 dataDir="$HOME/satea/$projectName/data"
+orderId=${ORDER_ID-"0"}
 moniker=${MONIKER-"Test"}
 walletName=${WALLET_NAME-"wallet"}
 GO_VERSION="1.22.0"
@@ -162,9 +163,8 @@ function stop() {
 function upgrade() {
     echo "upgrade ..."
     source $HOME/.bash_profile
-    cd $workDir
     # 按需添加脚本
-    cd && rm -rf 0g-chain
+    rm -rf 0g-chain
     git clone -b $PROJECT_VERSION https://github.com/0glabs/0g-chain.git
     cd 0g-chain
     make install
@@ -222,7 +222,7 @@ EOF
         cat <<EOF
         {
             "status": "Running",
-            "orderId": $ORDER_ID,
+            "orderId": $orderId,
             "pid": $pid,
             "memory": $memory,
             "cpu": $cpu,
