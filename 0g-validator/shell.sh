@@ -170,7 +170,7 @@ function upgrade() {
     make install
 
     # update chain-id
-    0gchaind config chain-id zgtendermint_16600-2
+    0gchaind --home $dataDir config chain-id zgtendermint_16600-2
 
     # download new genesis and addrbook
     curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/genesis.json > $dataDir/config/genesis.json
@@ -180,7 +180,7 @@ function upgrade() {
     sed -i -e 's|^seeds *=.*|seeds = "81987895a11f6689ada254c6b57932ab7ed909b6@54.241.167.190:26656,010fb4de28667725a4fef26cdc7f9452cc34b16d@54.176.175.48:26656,e9b4bc203197b62cc7e6a80a64742e752f4210d5@54.193.250.204:26656,68b9145889e7576b652ca68d985826abd46ad660@18.166.164.232:26656"|' $dataDir/config/config.toml
 
     # reset chain data
-    0gchaind tendermint unsafe-reset-all --keep-addr-book
+    0gchaind --home $dataDir tendermint unsafe-reset-all --keep-addr-book
 }
 
 function snapshot() {
@@ -191,7 +191,7 @@ function snapshot() {
     sourceUrl=$1
     wget -c -O snapshot.tar.lz4 $sourceUrl
     cp $dataDir/data/priv_validator_state.json $dataDir/priv_validator_state.json.backup
-    0gchaind tendermint unsafe-reset-all --home $dataDir --keep-addr-book
+    0gchaind --home $dataDir tendermint unsafe-reset-all --keep-addr-book
     lz4 -dc snapshot.tar.lz4 | tar -xf - -C "$dataDir"
     mv $HOME/.0gchain/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
     start
