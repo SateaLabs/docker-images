@@ -37,6 +37,9 @@ armv7l)
 aarch64)
     PLATFORM="arm64"
     ;;
+arm64)
+    PLATFORM="arm64"
+    ;;
 *)
     echo "不支持的架构: $ARCH"
     exit 1
@@ -101,7 +104,7 @@ function install() {
     fi
     git clone https://github.com/0glabs/0g-chain
     cd 0g-chain
-    git checkout v0.2.5
+    git checkout $PROJECT_VERSION
 
     # Build binary
     make install
@@ -110,13 +113,13 @@ function install() {
     0gchaind --home $dataDir config chain-id zgtendermint_16600-2
     0gchaind --home $dataDir config keyring-backend test
     0gchaind --home $dataDir config node tcp://localhost:27657
-    
+
     # Initialize the node
     0gchaind --home $dataDir init "$moniker" --chain-id zgtendermint_16600-2
 
     # Download genesis and addrbook files
-    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/genesis.json > $dataDir/config/genesis.json
-    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/addrbook.json > $dataDir/config/addrbook.json
+    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/genesis.json >$dataDir/config/genesis.json
+    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/addrbook.json >$dataDir/config/addrbook.json
 
     # Set seeds
     sed -i -e 's|^seeds *=.*|seeds = "81987895a11f6689ada254c6b57932ab7ed909b6@54.241.167.190:26656,010fb4de28667725a4fef26cdc7f9452cc34b16d@54.176.175.48:26656,e9b4bc203197b62cc7e6a80a64742e752f4210d5@54.193.250.204:26656,68b9145889e7576b652ca68d985826abd46ad660@18.166.164.232:26656"|' $dataDir/config/config.toml
@@ -139,7 +142,7 @@ function start() {
     checkVars
     # 按需添加脚本
     # 使用 PM2 启动节点进程
-    pm2-runtime start --name "0gchaind" "0gchaind --home $dataDir start" 
+    pm2-runtime restart --name "0gchaind" "0gchaind --home $dataDir start"
 }
 
 function stop() {
@@ -151,6 +154,34 @@ function stop() {
 function upgrade() {
     echo "upgrade ..."
     # 按需添加脚本
+    cd && rm -rf 0g-chain
+    git clone -b $PROJECT_VERSION https://github.com/0glabs/0g-chain.git
+    cd 0g-chain
+    make install
+
+    # update chain-id
+    0gchaind config chain-id zgtendermint_16600-2
+
+    # download new genesis and addrbook
+    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/genesis.json >$HOME/.0gchain/config/genesis.json
+    curl -L https://snapshots-testnet.nodejumper.io/0g-testnet/addrbook.json >$HOME/.0gchain/config/addrbook.json
+
+    # set new seeds
+    sed -i -e 's|^seeds *=.*|seeds = "81987895a11f6689ada254c6b57932ab7ed909b6@54.241.167.190:26656,010fb4de28667725a4fef26cdc7f9452cc34b16d@54.176.175.48:26656,e9b4bc203197b62cc7e6a80a64742e752f4210d5@54.193.250.204:26656,68b9145889e7576b652ca68d985826abd46ad660@18.166.164.232:26656"|' $HOME/.0gchain/config/config.toml
+
+    # reset chain data
+    0gchaind tendermint unsafe-reset-all --keep-addr-book
+}
+
+function snapshot() {
+    echo "snapshot ..."
+    # 按需添加脚本
+    sourceUrl=$1
+    wget -c -O snapshot.tar.lz4 $sourceUrl
+    cp $dataDir/data/priv_validator_state.json $dataDir/priv_validator_state.json.backup
+    0gchaind tendermint unsafe-reset-all --home $dataDir --keep-addr-book
+    lz4 -dc snapshot.tar.lz4 | tar -xf - -C "$dataDir"
+    mv $HOME/.0gchain/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
 }
 
 function check() {
@@ -169,6 +200,7 @@ function clean() {
 function logs() {
     echo "logs ...."
     # 按需添加脚本
+    tail -f $dataDir/log/chain.log
 }
 
 function About() {
@@ -220,6 +252,10 @@ upgrade)
     #创建升级节点的函数
     upgrade
     ;;
+snapshot)
+    #拉去快照数据
+    snapshot $2
+    ;;
 check)
     #创建一些用于检查节点的函数
     check
@@ -244,6 +280,7 @@ logs)
   start                Start the $projectName service
   stop                 Stop the $projectName service
   upgrade              Upgrade an existing installation of $projectName
+  snapshot             Update $projectName snapshot data example: snapshot "source url"
   check                Check $projectName service status
   clean                Remove the $projectName from your service, remove data!!! 
   logs                 Show the logs of the $projectName service"
