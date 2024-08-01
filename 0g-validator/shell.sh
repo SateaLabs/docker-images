@@ -217,7 +217,7 @@ function check() {
 EOF
     else
         total_blocks=$(echo $officialNodeStatus | jq .total_blocks | sed 's/^"\(.*\)"$/\1/')
-        latest_block_height=$(0gchaind status | jq .sync_info.latest_block_height | sed 's/^"\(.*\)"$/\1/')
+        latest_block_height=$(0gchaind --home $dataDir status | jq .sync_info.latest_block_height | sed 's/^"\(.*\)"$/\1/')
         blockDiff=$(expr $total_blocks - $latest_block_height)
         pm2Status=$(pm2 jlist)
         pid=$(echo $pm2Status | jq .[0].pid)
