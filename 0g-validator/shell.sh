@@ -189,7 +189,7 @@ function upgrade() {
 function snapshot() {
     echo "snapshot ..."
     source $HOME/.bash_profile
-    stop
+    # stop
     # 按需添加脚本
     sourceUrl=${1-"https://snapshots-testnet.nodejumper.io/0g-testnet/0g-testnet_latest.tar.lz4"}
     wget -c -O snapshot.tar.lz4 $sourceUrl
