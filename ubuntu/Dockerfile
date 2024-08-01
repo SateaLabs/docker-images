@@ -14,6 +14,7 @@ RUN apt-get -y install \
     make \
     liblz4-tool \
     lz4 \
+    net-tools \
     curl \
     gnupg \
     expect \

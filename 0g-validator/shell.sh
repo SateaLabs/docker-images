@@ -3,7 +3,7 @@
 # 变量初始化
 projectName=${PRJECT_NAME-"0g-validator"}
 workDir="/$HOME/satea/$projectName"
-dataDir="$HOME/satea/$projectName/data"
+dataDir="$HOME/satea/$projectName/0gchaind"
 orderId=${ORDER_ID-"0"}
 moniker=${MONIKER-"Test"}
 walletName=${WALLET_NAME-"wallet"}
@@ -191,10 +191,10 @@ function snapshot() {
     # 按需添加脚本
     sourceUrl=$1
     wget -c -O snapshot.tar.lz4 $sourceUrl
-    cp $dataDir/data/priv_validator_state.json $dataDir/priv_validator_state.json.backup
+    cp $dataDir/data/priv_validator_state.json $dataDir/data/priv_validator_state.json.backup
     0gchaind --home $dataDir tendermint unsafe-reset-all --keep-addr-book
     lz4 -dc snapshot.tar.lz4 | tar -xf - -C "$dataDir"
-    mv $HOME/.0gchain/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
+    mv $dataDir/data/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
     start
 }
 
