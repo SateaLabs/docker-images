@@ -11,4 +11,4 @@ RUN wget "https://raw.githubusercontent.com/SateaLabs/docker-images/main/0g-vali
 
 ENV PATH=$PATH:/usr/local/go/bin:/root/go/bin
 
-CMD ["bash","shell.sh","start"]
+ENTRYPOINT ["bash","shell.sh","start"]
