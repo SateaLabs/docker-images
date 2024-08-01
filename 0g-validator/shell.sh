@@ -152,7 +152,7 @@ function start() {
     checkVars
     # 按需添加脚本
     # 使用 PM2 启动节点进程
-    pm2 start --name "$pm2Name" "0gchaind --home $dataDir start"
+    pm2-runtime start --name "$pm2Name" "0gchaind --home $dataDir start" &
 }
 
 function stop() {
