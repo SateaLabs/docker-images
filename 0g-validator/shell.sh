@@ -195,7 +195,7 @@ function snapshot() {
     wget -c -O snapshot.tar.lz4 $sourceUrl
     cp $dataDir/data/priv_validator_state.json $dataDir/priv_validator_state.json.backup
     0gchaind tendermint unsafe-reset-all --keep-addr-book --home $dataDir
-    lz4 -dc snapshot.tar.lz4 | tar -xf - -C "$dataDir"
+    lz4 -dc snapshot.tar.lz4 | tar -xf - -C $dataDir
     mv $dataDir/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
     pm2 restart $pm2Name
 }
