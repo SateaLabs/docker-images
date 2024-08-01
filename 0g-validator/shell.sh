@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # 变量初始化
-export projectName=${PRJECT_NAME-"0g-validator"}
-export workDir="/$HOME/satea/$projectName"
-export dataDir="$HOME/satea/$projectName/0gchaind"
-export orderId=${ORDER_ID-"0"}
-export moniker=${MONIKER-"Test"}
-export walletName=${WALLET_NAME-"wallet"}
-export pm2Name="0gchaind"
-export GO_VERSION="1.22.0"
-export PROJECT_VERSION="v0.2.5"
+projectName=${PRJECT_NAME-"0g-validator"}
+workDir="/$HOME/satea/$projectName"
+dataDir="$HOME/satea/$projectName/0gchaind"
+orderId=${ORDER_ID-"0"}
+moniker=${MONIKER-"Test"}
+walletName=${WALLET_NAME-"wallet"}
+pm2Name="0gchaind"
+GO_VERSION="1.22.0"
+PROJECT_VERSION="v0.2.5"
 
 
 ALL_SATEA_VARS=("projectName" "moniker" "walletName")
@@ -182,7 +182,7 @@ function upgrade() {
     sed -i -e 's|^seeds *=.*|seeds = "81987895a11f6689ada254c6b57932ab7ed909b6@54.241.167.190:26656,010fb4de28667725a4fef26cdc7f9452cc34b16d@54.176.175.48:26656,e9b4bc203197b62cc7e6a80a64742e752f4210d5@54.193.250.204:26656,68b9145889e7576b652ca68d985826abd46ad660@18.166.164.232:26656"|' $dataDir/config/config.toml
 
     # reset chain data
-    0gchaind --home $dataDir tendermint unsafe-reset-all --keep-addr-book
+    0gchaind tendermint unsafe-reset-all --keep-addr-book
     # fix bug
     rm -rf $HOME/.0gchain
 }
@@ -194,7 +194,7 @@ function snapshot() {
     sourceUrl=${1-"https://snapshots-testnet.nodejumper.io/0g-testnet/0g-testnet_latest.tar.lz4"}
     wget -c -O snapshot.tar.lz4 $sourceUrl
     cp $dataDir/data/priv_validator_state.json $dataDir/priv_validator_state.json.backup
-    0gchaind --home $dataDir tendermint unsafe-reset-all --keep-addr-book
+    0gchaind tendermint unsafe-reset-all --keep-addr-book
     lz4 -dc snapshot.tar.lz4 | tar -xf - -C "$dataDir"
     mv $dataDir/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
     pm2 restart $pm2Name
