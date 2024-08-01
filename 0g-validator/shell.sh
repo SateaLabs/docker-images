@@ -182,7 +182,7 @@ function upgrade() {
     sed -i -e 's|^seeds *=.*|seeds = "81987895a11f6689ada254c6b57932ab7ed909b6@54.241.167.190:26656,010fb4de28667725a4fef26cdc7f9452cc34b16d@54.176.175.48:26656,e9b4bc203197b62cc7e6a80a64742e752f4210d5@54.193.250.204:26656,68b9145889e7576b652ca68d985826abd46ad660@18.166.164.232:26656"|' $dataDir/config/config.toml
 
     # reset chain data
-    0gchaind tendermint unsafe-reset-all --keep-addr-book --home $dataDir
+    0gchaind tendermint unsafe-reset-all --home $dataDir --keep-addr-book
     # fix bug
     rm -rf $HOME/.0gchain
 }
@@ -194,7 +194,7 @@ function snapshot() {
     sourceUrl=${1-"https://snapshots-testnet.nodejumper.io/0g-testnet/0g-testnet_latest.tar.lz4"}
     wget -c -O snapshot.tar.lz4 $sourceUrl
     cp $dataDir/data/priv_validator_state.json $dataDir/priv_validator_state.json.backup
-    0gchaind tendermint unsafe-reset-all --keep-addr-book --home $dataDir
+    0gchaind tendermint unsafe-reset-all --home $dataDir --keep-addr-book
     lz4 -dc snapshot.tar.lz4 | tar -xf - -C $dataDir
     mv $dataDir/priv_validator_state.json.backup $dataDir/data/priv_validator_state.json
     pm2 restart $pm2Name
@@ -241,9 +241,8 @@ EOF
 
 function clean() {
     echo "clean ...."
-    # 按需添加脚本
     stop
-    ########清理数据#########
+    # 按需添加脚本
     rm -rf $workDir
 }
 
